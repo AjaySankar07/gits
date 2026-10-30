@@ -1,24 +1,25 @@
 
-from flask import Flask, request
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
-app = Flask(__name__)
+class App(BaseHTTPRequestHandler):
 
-@app.route("/")
-def home():
-    return """
-    <html>
-    <head><title>Sample Application</title></head>
-    <body>
-    <h1>Welcome to Web Application</h1>
-    <p>OWASP ZAP Security Testing</p>
-    </body>
-    </html>
-    """
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
 
-@app.route("/search")
-def search():
-    name = request.args.get("name", "")
-    return "<h2>Search Result: " + name + "</h2>"
+        html = """
+        <html>
+        <body>
+        <h1>Welcome to My Website</h1>
+        <h2>OWASP ZAP Security Testing</h2>
+        </body>
+        </html>
+        """
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+        self.wfile.write(html.encode())
+
+server = HTTPServer(("0.0.0.0", 8000), App)
+
+print("Server Started")
+server.serve_forever()
